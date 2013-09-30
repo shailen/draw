@@ -5,7 +5,14 @@ class CanvasDrawer {
   CanvasElement canvas;
   CanvasRenderingContext2D ctxt;
   Rect offset;
-  var lines = {};
+  var lines = {}; // Get rid of this.
+
+  int lastX, lastY, nextX, nextY;
+  bool drawing = false;
+  var subscription;
+
+
+
 
   CanvasDrawer(this.canvas) {
     ctxt = canvas.getContext('2d');
@@ -15,11 +22,52 @@ class CanvasDrawer {
     ctxt.lineWidth = 12;
     ctxt.lineCap = "round";
     offset = canvas.offset;
+    ctxt.strokeStyle = 'orange';
   }
 
   void init() {
     canvas.onTouchStart.listen(preDraw);
     canvas.onTouchMove.listen(draw);
+    canvas.onMouseDown.listen((MouseEvent e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      lastX = nextX = e.client.x - offset.left;
+      lastY = nextY = e.client.y - offset.top;
+
+      subscription = canvas.onMouseMove.listen(mouseMoveCallback);
+      canvas.onMouseUp.listen(mouseUpCallback);
+      drawing = true;
+      drawLine();
+    });
+  }
+
+  void mouseMoveCallback(MouseEvent e) {
+    e.preventDefault();
+    e.stopPropagation();
+    nextX = e.client.x - offset.left;
+    nextY = e.client.y - offset.top;
+    drawLine();
+  }
+
+  void drawLine() {
+    if (!drawing) return;
+
+    ctxt.beginPath();
+    ctxt.moveTo(lastX, lastY);
+    ctxt.lineTo(nextX, nextY);
+    ctxt.stroke();
+    ctxt.closePath();
+
+    lastX = nextX;
+    lastY = nextY;
+  }
+
+  void mouseUpCallback(MouseEvent e) {
+    e.preventDefault();
+    e.stopPropagation();
+    subscription.cancel();
+    drawing = false;
   }
 
   void preDraw(TouchEvent e) {
