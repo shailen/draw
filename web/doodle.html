@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Doodle</title>
+  <link rel="stylesheet" type="text/css" href="doodle.css">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+ </head>
+
+<body>
+  <div id='canvas-container'>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div id='controls-container'>
+    <div class='control-item'>
+      <!--<label for="brushThickness" class='select-label'>Brush thickness: </label>-->
+      <select name="thickness" bind-value="selectedThickness" id='brushThickness'>
+        <option template repeat="thickness in thicknessMap.keys">{{thickness}}</option>
+      </select>
+    </div>
+
+    <div class='control-item'>
+      <!--<label for="colors" class="select-label">Colors: </label>-->
+      <select name="color" bind-value="selectedColor" id='colors'>
+        <option template repeat="color in colorsMap.keys">{{color}}</option>
+      </select>
+    </div>
+
+    <div class='control-item'>
+      <button name="undo" id="undo-last-doodle">Undo</button>
+    </div>
+  </div>
+
+
+  <script type='application/dart' src='doodle.dart'></script>
+  <script src="packages/browser/dart.js"></script>
+</body>
+</html>
